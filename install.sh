@@ -16,5 +16,7 @@ sudo curl -OL --progress-bar "https://go.dev/dl/${GOGZ}" && \
   sudo rm -rf /usr/local/go && \
   sudo tar -C /usr/local -xzf "/tmp/${GOGZ}"
 
-echo "Install completed !"
+echo "Install completed !!"
+
+/usr/local/go/bin/go version
 
