@@ -7,8 +7,8 @@ OS="$(uname)"
 ARCH="$(uname -m)"
 
 echo "Latest go version is ---  ${LATEST_GO_VERSION}  ---"
-
-echo "OS: ${OS} Arch: ${ARCH}"
+echo "OS: ${OS}"
+echo "Arch: ${ARCH}"
 
 
 if [ "${OS}" = "Darwin" ]; then
@@ -22,7 +22,9 @@ if [ "${OS}" = "Darwin" ]; then
   [ "$GOPKG" = "" ] && exit
 
   trap 'rm ${GOPKG}' EXIT
-  sudo curl -OL --progress-bar "https://go.dev/dl/${GOGZ}"
+
+  curl -OL --progress-bar "https://go.dev/dl/${GOGZ}"
+
   open "${GOPKG}"
 
 elif [ "${OS}" = "Linux" ]; then
