@@ -10,7 +10,6 @@ echo "Latest go version is ---  ${LATEST_GO_VERSION}  ---"
 echo "OS: ${OS}"
 echo "Arch: ${ARCH}"
 
-
 if [ "${OS}" = "Darwin" ]; then
   GOPKG=""
   if [ "${ARCH}" = "x86_64" ]; then
@@ -25,6 +24,9 @@ if [ "${OS}" = "Darwin" ]; then
 
   trap 'sudo rm ${GOPKG}' EXIT
   sudo installer -pkg "${GOPKG}" -target /usr/local/go
+
+  echo "Install completed !!"
+  /usr/local/go/bin/go version
 
 elif [ "${OS}" = "Linux" ]; then
   GOGZ=""
@@ -43,6 +45,5 @@ elif [ "${OS}" = "Linux" ]; then
     sudo tar -C /usr/local -xzf "${GOGZ}"
 
   echo "Install completed !!"
-
   /usr/local/go/bin/go version
 fi
