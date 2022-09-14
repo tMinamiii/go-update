@@ -21,9 +21,10 @@ if [ "${OS}" = "Darwin" ]; then
 
   [ "$GOPKG" = "" ] && exit
 
-  curl -OL --progress-bar "https://go.dev/dl/${GOGZ}"
+  sudo curl -OL --progress-bar "https://go.dev/dl/${GOPKG}"
 
-  open "${GOPKG}"
+  trap 'sudo rm ${GOPKG}' EXIT
+  sudo installer -pkg "${GOPKG}" -target /usr/local/go
 
 elif [ "${OS}" = "Linux" ]; then
   GOGZ=""
