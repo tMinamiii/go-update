@@ -21,8 +21,6 @@ if [ "${OS}" = "Darwin" ]; then
 
   [ "$GOPKG" = "" ] && exit
 
-  trap 'rm ${GOPKG}' EXIT
-
   curl -OL --progress-bar "https://go.dev/dl/${GOGZ}"
 
   open "${GOPKG}"
