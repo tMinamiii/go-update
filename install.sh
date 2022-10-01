@@ -2,7 +2,14 @@
 
 set -Ceu
 
+CURRENT_GO_VERSION=$(go version | cut -f 3 -d " ")
 LATEST_GO_VERSION=$(curl -s 'https://go.dev/dl/?mode=json' | jq -r '[.[]][0].version')
+
+if [ "${CURRENT_GO_VERSION}" = "${LATEST_GO_VERSION}" ]; then
+  echo "latest version already installed. -- ${CURRENT_GO_VERSION}"
+  exit 0
+fi
+
 OS="$(uname)"
 ARCH="$(uname -m)"
 
