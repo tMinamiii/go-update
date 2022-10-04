@@ -128,7 +128,7 @@ func main() {
 		os.Exit(1)
 	}
 	if isLatest {
-		fmt.Printf("Latest version already installed. -- %s", runtime.Version())
+		fmt.Printf("Latest version already installed. -- %s\n", runtime.Version())
 		os.Exit(0)
 	}
 
