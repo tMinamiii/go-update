@@ -128,9 +128,12 @@ func main() {
 		os.Exit(1)
 	}
 	if isLatest {
-		fmt.Printf("latest version already installed. -- %s", runtime.Version())
+		fmt.Printf("Latest version already installed. -- %s", runtime.Version())
 		os.Exit(0)
 	}
+
+	fmt.Printf("Your version is %s and latest version is %s\n", runtime.Version(), latest)
+	fmt.Printf("Start the Installation %s\n", latest)
 
 	url := fmt.Sprintf("https://go.dev/dl/%s", packageName(latest))
 	resp, err := http.Get(url)
