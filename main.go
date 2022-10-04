@@ -52,8 +52,6 @@ func copyFileTgz(base string, from *tar.Reader, header *tar.Header) error {
 	tok = append(tok, strings.Split(header.Name, "/")[1:]...)
 	fullpath := filepath.Join(tok...)
 
-	// fmt.Println(fullpath)
-
 	if header.FileInfo().Mode().IsDir() {
 		return os.MkdirAll(fullpath, 0755)
 	}
@@ -115,14 +113,22 @@ func IsLatest(latest, current string) (bool, error) {
 	}
 
 	return latestVersion.LessThanOrEqual(currentVersion), nil
-
 }
 
 func main() {
 	latest, err := fetchLatestVersion()
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 		os.Exit(1)
+	}
+
+	isLatest, err := IsLatest(latest, runtime.Version())
+	if err != nil {
+		log.Fatal(err)
+		os.Exit(1)
+	}
+	if isLatest {
+		fmt.Printf("latest version already installed. -- %s", runtime.Version())
 	}
 
 	url := fmt.Sprintf("https://go.dev/dl/%s", packageName(latest))
