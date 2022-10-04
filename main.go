@@ -116,6 +116,11 @@ func IsLatest(latest, current string) (bool, error) {
 }
 
 func main() {
+	if runtime.GOOS == "windows" {
+		fmt.Println("windows is incompatible")
+		os.Exit(0)
+	}
+
 	latest, err := fetchLatestVersion()
 	if err != nil {
 		log.Fatal(err)
