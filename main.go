@@ -148,7 +148,7 @@ func checkVersion(target, current string) {
 }
 
 func install(target, current string) error {
-	fmt.Printf("Your version is %s and latest version is %s\n", current, target)
+	fmt.Printf("Your version is %s and target version is %s\n", current, target)
 	fmt.Printf("Start the Installation %s\n", target)
 
 	url := fmt.Sprintf("https://go.dev/dl/%s", packageName(target))
