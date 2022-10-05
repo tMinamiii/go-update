@@ -193,9 +193,8 @@ func main() {
 			log.Fatal(err)
 			os.Exit(1)
 		}
-
+		checkVersion(*target, *current)
 	}
-	checkVersion(*target, runtime.Version())
 
 	err = install(*target, *current)
 	if err != nil {
