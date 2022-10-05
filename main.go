@@ -38,6 +38,20 @@ func rebuildGoUpdate() error {
 	return nil
 }
 
+func getCurrentVersion() (*string, error) {
+	gobin := DefaultBase + "/bin/go"
+	goVersionBytes, err := exec.Command(gobin, "version").Output()
+	if err != nil {
+		return nil, err
+	}
+	goVersionStr := string(goVersionBytes)
+	goVersion := strings.Split(goVersionStr, " ")
+	if len(goVersion) < 2 {
+		return nil, fmt.Errorf("Failed to exec go version: result = %+v", goVersion)
+	}
+	return &goVersion[2], nil
+}
+
 func fetchLatestVersion() (*string, error) {
 	resp, err := http.Get("https://go.dev/dl/?mode=json")
 	if err != nil {
@@ -160,9 +174,13 @@ func install(target, current string) error {
 
 func main() {
 	target := flag.String("v", "", "version")
-
 	flag.Parse()
-	current := runtime.Version()
+	current, err := getCurrentVersion()
+	if err != nil {
+		log.Fatal(err)
+		os.Exit(1)
+	}
+
 	if runtime.GOOS == "windows" {
 		fmt.Println("windows is incompatible")
 		os.Exit(0)
@@ -179,7 +197,7 @@ func main() {
 	}
 	checkVersion(*target, runtime.Version())
 
-	err := install(*target, current)
+	err = install(*target, *current)
 	if err != nil {
 		log.Fatal(err)
 		os.Exit(1)
