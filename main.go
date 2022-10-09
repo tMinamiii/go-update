@@ -208,18 +208,16 @@ func main() {
 		os.Exit(1)
 	}
 
-	if !versions.isAvailable(*target) {
+	if *target == "" {
+		target := versions[0]
+		checkVersion(target, *current)
+	} else if !versions.isAvailable(*target) {
 		fmt.Printf("%s is not available.\n\n", *target)
 		fmt.Println("Available versions:")
 		for _, v := range versions {
 			fmt.Println(v)
 		}
 		os.Exit(0)
-	}
-
-	if *target == "" {
-		target := versions[0]
-		checkVersion(target, *current)
 	}
 
 	err = install(*target, *current)
