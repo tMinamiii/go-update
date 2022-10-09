@@ -209,8 +209,8 @@ func main() {
 	}
 
 	if *target == "" {
-		target := versions[0]
-		checkVersion(target, *current)
+		target = &versions[0]
+		checkVersion(*target, *current)
 	} else if !versions.isAvailable(*target) {
 		fmt.Printf("%s is not available.\n\n", *target)
 		fmt.Println("Available versions:")
