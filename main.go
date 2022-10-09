@@ -28,6 +28,14 @@ type GoDownloadCandidate struct {
 
 type GoDownloadCandidates []GoDownloadCandidate
 
+func (g *GoDownloadCandidates) versions() GoVersions {
+	versions := make(GoVersions, 0, len(*g))
+	for _, v := range *g {
+		versions = append(versions, v.Version)
+	}
+	return versions
+}
+
 type GoVersions []string
 
 func (g *GoVersions) isAvailable(version string) bool {
@@ -37,6 +45,13 @@ func (g *GoVersions) isAvailable(version string) bool {
 		}
 	}
 	return false
+}
+
+func (g *GoVersions) printAvailable() {
+	fmt.Println("Available versions:")
+	for _, v := range *g {
+		fmt.Println(v)
+	}
 }
 
 func rebuildGoUpdate() error {
@@ -84,12 +99,7 @@ func fetchAvailableVersion() (GoVersions, error) {
 		return nil, fmt.Errorf("no candidates")
 	}
 
-	versions := make(GoVersions, 0, len(candidates))
-	for _, v := range candidates {
-		versions = append(versions, v.Version)
-	}
-
-	return versions, nil
+	return candidates.versions(), nil
 }
 
 func copyFileTgz(base string, from *tar.Reader, header *tar.Header) error {
@@ -212,11 +222,7 @@ func main() {
 		target = &versions[0]
 		checkVersion(*target, *current)
 	} else if !versions.isAvailable(*target) {
-		fmt.Printf("%s is not available.\n\n", *target)
-		fmt.Println("Available versions:")
-		for _, v := range versions {
-			fmt.Println(v)
-		}
+		versions.printAvailable()
 		os.Exit(0)
 	}
 
