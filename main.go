@@ -28,6 +28,17 @@ type GoDownloadCandidate struct {
 
 type GoDownloadCandidates []GoDownloadCandidate
 
+type GoVersions []string
+
+func (g *GoVersions) isAvailable(version string) bool {
+	for _, v := range *g {
+		if v == version {
+			return true
+		}
+	}
+	return false
+}
+
 func rebuildGoUpdate() error {
 	gobin := DefaultBase + "/bin/go"
 	repos := Repository + "@latest"
@@ -52,7 +63,7 @@ func getCurrentVersion() (*string, error) {
 	return &goVersion[2], nil
 }
 
-func fetchLatestVersion() (*string, error) {
+func fetchAvailableVersion() (GoVersions, error) {
 	resp, err := http.Get("https://go.dev/dl/?mode=json")
 	if err != nil {
 		return nil, nil
@@ -73,7 +84,12 @@ func fetchLatestVersion() (*string, error) {
 		return nil, fmt.Errorf("no candidates")
 	}
 
-	return &candidates[0].Version, nil
+	versions := make(GoVersions, 0, len(candidates))
+	for _, v := range candidates {
+		versions = append(versions, v.Version)
+	}
+
+	return versions, nil
 }
 
 func copyFileTgz(base string, from *tar.Reader, header *tar.Header) error {
@@ -186,14 +202,24 @@ func main() {
 		os.Exit(0)
 	}
 
-	if *target == "" {
-		var err error
-		target, err = fetchLatestVersion()
-		if err != nil {
-			log.Fatal(err)
-			os.Exit(1)
+	versions, err := fetchAvailableVersion()
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
+
+	if !versions.isAvailable(*target) {
+		fmt.Printf("%s is not available\n\n", *target)
+		fmt.Println("Available versions:")
+		for _, v := range versions {
+			fmt.Println(v)
 		}
-		checkVersion(*target, *current)
+		os.Exit(0)
+	}
+
+	if *target == "" {
+		target := versions[0]
+		checkVersion(target, *current)
 	}
 
 	err = install(*target, *current)
@@ -202,7 +228,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	rebuildGoUpdate()
+	err = rebuildGoUpdate()
+	if err != nil {
+		log.Fatal(err)
+		os.Exit(1)
+	}
 
 	fmt.Printf("latest version %s installed\n", *target)
 }
