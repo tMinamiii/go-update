@@ -58,7 +58,7 @@ func getCurrentVersion() (*string, error) {
 	goVersionStr := string(goVersionBytes)
 	goVersion := strings.Split(goVersionStr, " ")
 	if len(goVersion) < 2 {
-		return nil, fmt.Errorf("Failed to exec go version: result = %+v", goVersion)
+		return nil, fmt.Errorf("Failed to exec go version. result = %+v", goVersion)
 	}
 	return &goVersion[2], nil
 }
@@ -198,7 +198,7 @@ func main() {
 	}
 
 	if runtime.GOOS == "windows" {
-		fmt.Println("windows is incompatible")
+		fmt.Println("Windows is incompatible.")
 		os.Exit(0)
 	}
 
@@ -209,7 +209,7 @@ func main() {
 	}
 
 	if !versions.isAvailable(*target) {
-		fmt.Printf("%s is not available\n\n", *target)
+		fmt.Printf("%s is not available.\n\n", *target)
 		fmt.Println("Available versions:")
 		for _, v := range versions {
 			fmt.Println(v)
@@ -234,5 +234,5 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Printf("latest version %s installed\n", *target)
+	fmt.Printf("Latest version %s installed.\n", *target)
 }
