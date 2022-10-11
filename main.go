@@ -28,6 +28,32 @@ type GoDownloadCandidate struct {
 
 type GoDownloadCandidates []GoDownloadCandidate
 
+func (g *GoDownloadCandidates) versions() GoVersions {
+	versions := make(GoVersions, 0, len(*g))
+	for _, v := range *g {
+		versions = append(versions, v.Version)
+	}
+	return versions
+}
+
+type GoVersions []string
+
+func (g *GoVersions) isAvailable(version string) bool {
+	for _, v := range *g {
+		if v == version {
+			return true
+		}
+	}
+	return false
+}
+
+func (g *GoVersions) printAvailable() {
+	fmt.Println("Available versions:")
+	for _, v := range *g {
+		fmt.Println(v)
+	}
+}
+
 func rebuildGoUpdate() error {
 	gobin := DefaultBase + "/bin/go"
 	repos := Repository + "@latest"
@@ -47,12 +73,12 @@ func getCurrentVersion() (*string, error) {
 	goVersionStr := string(goVersionBytes)
 	goVersion := strings.Split(goVersionStr, " ")
 	if len(goVersion) < 2 {
-		return nil, fmt.Errorf("Failed to exec go version: result = %+v", goVersion)
+		return nil, fmt.Errorf("Failed to exec go version. result = %+v", goVersion)
 	}
 	return &goVersion[2], nil
 }
 
-func fetchLatestVersion() (*string, error) {
+func fetchAvailableVersion() (GoVersions, error) {
 	resp, err := http.Get("https://go.dev/dl/?mode=json")
 	if err != nil {
 		return nil, nil
@@ -73,7 +99,7 @@ func fetchLatestVersion() (*string, error) {
 		return nil, fmt.Errorf("no candidates")
 	}
 
-	return &candidates[0].Version, nil
+	return candidates.versions(), nil
 }
 
 func copyFileTgz(base string, from *tar.Reader, header *tar.Header) error {
@@ -182,18 +208,22 @@ func main() {
 	}
 
 	if runtime.GOOS == "windows" {
-		fmt.Println("windows is incompatible")
+		fmt.Println("Windows is incompatible.")
 		os.Exit(0)
 	}
 
+	versions, err := fetchAvailableVersion()
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
+
 	if *target == "" {
-		var err error
-		target, err = fetchLatestVersion()
-		if err != nil {
-			log.Fatal(err)
-			os.Exit(1)
-		}
+		target = &versions[0]
 		checkVersion(*target, *current)
+	} else if !versions.isAvailable(*target) {
+		versions.printAvailable()
+		os.Exit(0)
 	}
 
 	err = install(*target, *current)
@@ -202,7 +232,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	rebuildGoUpdate()
+	err = rebuildGoUpdate()
+	if err != nil {
+		log.Fatal(err)
+		os.Exit(1)
+	}
 
-	fmt.Printf("latest version %s installed\n", *target)
+	fmt.Printf("Latest version %s installed.\n", *target)
 }
