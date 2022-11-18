@@ -168,7 +168,7 @@ func checkVersion(target, current string) {
 	}
 
 	if targetVersion.LessThanOrEqual(currentVersion) {
-		fmt.Printf("Target version already installed. -- %s\n", current)
+		fmt.Printf("Target version already installed. -- %s %s\n", current, runtime.GOARCH)
 		os.Exit(0)
 	}
 }
@@ -238,5 +238,5 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Printf("Latest version %s installed.\n", *target)
+	fmt.Printf("Latest version %s %s installed.\n", *target, runtime.GOARCH)
 }
