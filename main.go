@@ -174,10 +174,11 @@ func checkVersion(target, current string) {
 }
 
 func install(target, current string) error {
-	fmt.Printf("Your version is %s and target version is %s\n", current, target)
-	fmt.Printf("Start the Installation %s\n", target)
+	fmt.Printf("Your version is %s and target version is %s %s\n", current, target, runtime.GOARCH)
 
-	url := fmt.Sprintf("https://go.dev/dl/%s", packageName(target))
+	pkgName := packageName(target)
+	fmt.Printf("Start the Installation %s\n", pkgName)
+	url := fmt.Sprintf("https://go.dev/dl/%s", pkgName)
 	resp, err := http.Get(url)
 	if err != nil {
 		log.Fatal(err)
