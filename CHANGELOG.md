@@ -1,5 +1,7 @@
 # Changelog
 
+## [v0.1.7](https://github.com/tMinamiii/go-update/compare/v0.1.6...v0.1.7) - 2022-11-19
+
 ## [v0.1.6](https://github.com/tMinamiii/go-update/compare/v0.1.5...v0.1.6) - 2022-11-18
 
 ## [v0.1.5](https://github.com/tMinamiii/go-update/compare/v0.1.4...v0.1.5) - 2022-10-11
