@@ -73,7 +73,7 @@ func getCurrentVersion() (*string, error) {
 	goVersionStr := string(goVersionBytes)
 	goVersion := strings.Split(goVersionStr, " ")
 	if len(goVersion) < 2 {
-		return nil, fmt.Errorf("Failed to exec go version. result = %+v", goVersion)
+		return nil, fmt.Errorf("failed to exec go version. result = %+v", goVersion)
 	}
 	return &goVersion[2], nil
 }
