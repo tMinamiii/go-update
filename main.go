@@ -168,16 +168,17 @@ func checkVersion(target, current string) {
 	}
 
 	if targetVersion.LessThanOrEqual(currentVersion) {
-		fmt.Printf("Target version already installed. -- %s\n", current)
+		fmt.Printf("Target version already installed. -- %s %s\n", current, runtime.GOARCH)
 		os.Exit(0)
 	}
 }
 
 func install(target, current string) error {
-	fmt.Printf("Your version is %s and target version is %s\n", current, target)
-	fmt.Printf("Start the Installation %s\n", target)
+	fmt.Printf("Your version is %s and target version is %s %s\n", current, target, runtime.GOARCH)
 
-	url := fmt.Sprintf("https://go.dev/dl/%s", packageName(target))
+	pkgName := packageName(target)
+	fmt.Printf("Start the Installation %s\n", pkgName)
+	url := fmt.Sprintf("https://go.dev/dl/%s", pkgName)
 	resp, err := http.Get(url)
 	if err != nil {
 		log.Fatal(err)
@@ -238,5 +239,5 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Printf("Latest version %s installed.\n", *target)
+	fmt.Printf("Latest version %s %s installed.\n", *target, runtime.GOARCH)
 }
